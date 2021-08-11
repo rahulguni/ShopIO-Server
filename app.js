@@ -8,7 +8,7 @@ var parseDashboard = require('parse-dashboard');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+  
 var app = express();
 
 // view engine setup
@@ -49,7 +49,7 @@ var dashboard = new parseDashboard({
       "serverURL": "http://localhost:1337/parse",
       "appId": "myAppId",
       "masterKey": "myMasterKey",
-      "appName": "MyApp"
+      "appName": "ShopIO"
     }
   ],
   "trustProxy": 1
