@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { default: ParseServer, ParseGraphQLServer } = require('parse-server');
 var parseDashboard = require('parse-dashboard');
+var S3Adapter = require('parse-server').S3Adapter;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -27,7 +28,16 @@ const parseServer = new ParseServer({
   appId: 'myAppId',
   masterKey: 'myMasterKey',
   serverURL: 'http://localhost:1337/parse',
-  publicServerURL: 'http://localhost:1337/parse'
+  publicServerURL: 'http://localhost:1337/parse',
+  filesAdapter: new S3Adapter(
+    "AKIAZCV7ATYG3GMZAH3K",
+    "xOzGTmsQmF9Ee1JWvIG6fkBhpGUa2YJprooeIeh/",
+    "shopiophotos",
+    {directAccess: true}
+  ),
+  liveQuery: {
+    classNames: ['Messages', 'ChatRoom']
+  }
 });
 
 //GraphQL Playground (Only for testing)

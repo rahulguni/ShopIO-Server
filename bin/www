@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('e-commerce-server:server');
 var http = require('http');
+const { default: ParseServer} = require('parse-server');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +21,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var parseLiveQueryServer = ParseServer.createLiveQueryServer(server)
 
 /**
  * Listen on provided port, on all network interfaces.
