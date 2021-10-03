@@ -1,0 +1,594 @@
+-- Table: public.Address
+
+-- DROP TABLE public."Address";
+
+CREATE TABLE IF NOT EXISTS public."Address"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    line_1 text COLLATE pg_catalog."default",
+    line_2 text COLLATE pg_catalog."default",
+    city text COLLATE pg_catalog."default",
+    state text COLLATE pg_catalog."default",
+    country text COLLATE pg_catalog."default",
+    phone double precision,
+    "isDefault" boolean,
+    zip text COLLATE pg_catalog."default",
+    "geoPoints" point,
+    CONSTRAINT "Address_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT fk_address_user FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Address"
+    OWNER to rahulguni;
+-- Index: idx_addr_usr
+
+-- DROP INDEX public.idx_addr_usr;
+
+CREATE INDEX idx_addr_usr
+    ON public."Address" USING btree
+    ("userId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+******************************************************************************************************************************************************************************
+-- Table: public.ChatRoom
+
+-- DROP TABLE public."ChatRoom";
+
+CREATE TABLE IF NOT EXISTS public."ChatRoom"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "chatRoomId" text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    "senderId" text COLLATE pg_catalog."default",
+    CONSTRAINT "ChatRoom_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT "ChatRoom_chatRoomId_fkey" FOREIGN KEY ("chatRoomId")
+        REFERENCES public."Messages" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."ChatRoom"
+    OWNER to rahulguni;
+-- Index: chatRoom_idx
+
+-- DROP INDEX public."chatRoom_idx";
+
+CREATE INDEX "chatRoom_idx"
+    ON public."ChatRoom" USING btree
+    ("chatRoomId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+******************************************************************************************************************************************************************************
+-- Table: public.Followings
+
+-- DROP TABLE public."Followings";
+
+CREATE TABLE IF NOT EXISTS public."Followings"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    "shopId" text COLLATE pg_catalog."default",
+    CONSTRAINT "Followings_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT "Followings_shopId_fkey" FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "Followings_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Followings"
+    OWNER to rahulguni;
+-- Index: idx_Usr
+
+-- DROP INDEX public."idx_Usr";
+
+CREATE INDEX "idx_Usr"
+    ON public."Followings" USING btree
+    ("userId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Messages
+
+-- DROP TABLE public."Messages";
+
+CREATE TABLE IF NOT EXISTS public."Messages"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "senderId" text COLLATE pg_catalog."default",
+    "receiverId" text COLLATE pg_catalog."default",
+    CONSTRAINT "Messages_pkey" PRIMARY KEY ("objectId")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Messages"
+    OWNER to rahulguni;
+-- Index: idx_receiverId
+
+-- DROP INDEX public."idx_receiverId";
+
+CREATE INDEX "idx_receiverId"
+    ON public."Messages" USING btree
+    ("receiverId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_senderId
+
+-- DROP INDEX public."idx_senderId";
+
+CREATE INDEX "idx_senderId"
+    ON public."Messages" USING btree
+    ("senderId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Order
+
+-- DROP TABLE public."Order";
+
+CREATE TABLE IF NOT EXISTS public."Order"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    "sessionId" text COLLATE pg_catalog."default",
+    "subTotal" double precision,
+    "itemDiscount" double precision,
+    tax double precision,
+    total double precision,
+    "addressId" text COLLATE pg_catalog."default",
+    "pickUp" boolean,
+    "shopId" text COLLATE pg_catalog."default",
+    fulfilled boolean,
+    shipping double precision,
+    CONSTRAINT "Order_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT "Order_shopId_fkey" FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_order_address FOREIGN KEY ("addressId")
+        REFERENCES public."Address" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_order_user FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Order"
+    OWNER to rahulguni;
+-- Index: idx_order_usr
+
+-- DROP INDEX public.idx_order_usr;
+
+CREATE INDEX idx_order_usr
+    ON public."Order" USING btree
+    ("userId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Order_Item
+
+-- DROP TABLE public."Order_Item";
+
+CREATE TABLE IF NOT EXISTS public."Order_Item"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "productId" text COLLATE pg_catalog."default",
+    "orderId" text COLLATE pg_catalog."default",
+    price double precision,
+    discount double precision,
+    quantity double precision,
+    CONSTRAINT "Order_Item_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT fk_order_item_order FOREIGN KEY ("orderId")
+        REFERENCES public."Order" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_order_item_product_ FOREIGN KEY ("productId")
+        REFERENCES public."Product" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Order_Item"
+    OWNER to rahulguni;
+-- Index: idx_order_item_order
+
+-- DROP INDEX public.idx_order_item_order;
+
+CREATE INDEX idx_order_item_order
+    ON public."Order_Item" USING btree
+    ("orderId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_order_item_product
+
+-- DROP INDEX public.idx_order_item_product;
+
+CREATE INDEX idx_order_item_product
+    ON public."Order_Item" USING btree
+    ("productId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Product
+
+-- DROP TABLE public."Product";
+
+CREATE TABLE IF NOT EXISTS public."Product"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    title text COLLATE pg_catalog."default",
+    summary text COLLATE pg_catalog."default",
+    price double precision,
+    discount double precision DEFAULT 0,
+    quantity double precision,
+    content text COLLATE pg_catalog."default",
+    "shopId" text COLLATE pg_catalog."default",
+    "startsAt" timestamp with time zone,
+    "endsAt" timestamp with time zone,
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT fk_product_user FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_shopid FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Product"
+    OWNER to rahulguni;
+-- Index: idx_product_usr
+
+-- DROP INDEX public.idx_product_usr;
+
+CREATE INDEX idx_product_usr
+    ON public."Product" USING btree
+    ("userId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_shopId
+
+-- DROP INDEX public."idx_shopId";
+
+CREATE INDEX "idx_shopId"
+    ON public."Product" USING btree
+    ("shopId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Product_Images
+
+-- DROP TABLE public."Product_Images";
+
+CREATE TABLE IF NOT EXISTS public."Product_Images"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "productId" text COLLATE pg_catalog."default",
+    "productImage" text COLLATE pg_catalog."default",
+    "isDefault" boolean,
+    CONSTRAINT "Product_Images_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT "Fk_productId" FOREIGN KEY ("productId")
+        REFERENCES public."Product" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Product_Images"
+    OWNER to rahulguni;
+-- Index: idx_productId
+
+-- DROP INDEX public."idx_productId";
+
+CREATE INDEX "idx_productId"
+    ON public."Product_Images" USING btree
+    ("productId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Product_Review
+
+-- DROP TABLE public."Product_Review";
+
+CREATE TABLE IF NOT EXISTS public."Product_Review"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "productId" text COLLATE pg_catalog."default",
+    title text COLLATE pg_catalog."default",
+    rating double precision,
+    content text COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    CONSTRAINT "Product_Review_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT fk_review_product FOREIGN KEY ("productId")
+        REFERENCES public."Product" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_userid FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Product_Review"
+    OWNER to rahulguni;
+-- Index: idx_review_product
+
+-- DROP INDEX public.idx_review_product;
+
+CREATE INDEX idx_review_product
+    ON public."Product_Review" USING btree
+    ("productId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Request
+
+-- DROP TABLE public."Request";
+
+CREATE TABLE IF NOT EXISTS public."Request"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    "productId" text COLLATE pg_catalog."default",
+    "shopId" text COLLATE pg_catalog."default",
+    fulfilled boolean,
+    CONSTRAINT "Request_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT "Request_productId_fkey" FOREIGN KEY ("productId")
+        REFERENCES public."Product" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "Request_shopId_fkey" FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "Request_shopId_fkey1" FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "Request_shopId_fkey2" FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "Request_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Request"
+    OWNER to rahulguni;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Shop
+
+-- DROP TABLE public."Shop";
+
+CREATE TABLE IF NOT EXISTS public."Shop"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    title text COLLATE pg_catalog."default",
+    "userId" text COLLATE pg_catalog."default",
+    slogan text COLLATE pg_catalog."default",
+    "shopImage" text COLLATE pg_catalog."default",
+    "shippingCost" double precision,
+    "geoPoints" point,
+    CONSTRAINT "Shop_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT fk_shop_user FOREIGN KEY ("userId")
+        REFERENCES public."_User" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Shop"
+    OWNER to rahulguni;
+-- Index: idx_shp_usr
+
+-- DROP INDEX public.idx_shp_usr;
+
+CREATE INDEX idx_shp_usr
+    ON public."Shop" USING btree
+    ("userId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public.Shop_Address
+
+-- DROP TABLE public."Shop_Address";
+
+CREATE TABLE IF NOT EXISTS public."Shop_Address"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    "shopId" text COLLATE pg_catalog."default",
+    line_1 text COLLATE pg_catalog."default",
+    line_2 text COLLATE pg_catalog."default",
+    city text COLLATE pg_catalog."default",
+    state text COLLATE pg_catalog."default",
+    country text COLLATE pg_catalog."default",
+    phone double precision,
+    zip text COLLATE pg_catalog."default",
+    "isDefault" boolean,
+    "geoPoints" point,
+    CONSTRAINT "Shop_Address_pkey" PRIMARY KEY ("objectId"),
+    CONSTRAINT fk_shop_id FOREIGN KEY ("shopId")
+        REFERENCES public."Shop" ("objectId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Shop_Address"
+    OWNER to rahulguni;
+-- Index: idx_shp_id
+
+-- DROP INDEX public.idx_shp_id;
+
+CREATE INDEX idx_shp_id
+    ON public."Shop_Address" USING btree
+    ("shopId" COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+******************************************************************************************************************************************************************************
+-- Table: public._User
+
+-- DROP TABLE public."_User";
+
+CREATE TABLE IF NOT EXISTS public."_User"
+(
+    "objectId" text COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone,
+    "updatedAt" timestamp with time zone,
+    username text COLLATE pg_catalog."default",
+    email text COLLATE pg_catalog."default",
+    "emailVerified" boolean,
+    "authData" jsonb,
+    _rperm text[] COLLATE pg_catalog."default",
+    _wperm text[] COLLATE pg_catalog."default",
+    _hashed_password text COLLATE pg_catalog."default",
+    _email_verify_token_expires_at timestamp with time zone,
+    _email_verify_token text COLLATE pg_catalog."default",
+    _account_lockout_expires_at timestamp with time zone,
+    _failed_login_count double precision,
+    _perishable_token text COLLATE pg_catalog."default",
+    _perishable_token_expires_at timestamp with time zone,
+    _password_changed_at timestamp with time zone,
+    _password_history jsonb,
+    "lName" text COLLATE pg_catalog."default",
+    phone double precision,
+    "fName" text COLLATE pg_catalog."default",
+    "lastLogin" timestamp with time zone,
+    intro text COLLATE pg_catalog."default",
+    "displayImage" text COLLATE pg_catalog."default",
+    CONSTRAINT "_User_pkey" PRIMARY KEY ("objectId")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."_User"
+    OWNER to rahulguni;
+-- Index: _User_unique_email
+
+-- DROP INDEX public."_User_unique_email";
+
+CREATE UNIQUE INDEX "_User_unique_email"
+    ON public."_User" USING btree
+    (email COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: _User_unique_phone
+
+-- DROP INDEX public."_User_unique_phone";
+
+CREATE UNIQUE INDEX "_User_unique_phone"
+    ON public."_User" USING btree
+    (phone ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: _User_unique_username
+
+-- DROP INDEX public."_User_unique_username";
+
+CREATE UNIQUE INDEX "_User_unique_username"
+    ON public."_User" USING btree
+    (username COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: case_insensitive_email
+
+-- DROP INDEX public.case_insensitive_email;
+
+CREATE INDEX case_insensitive_email
+    ON public."_User" USING btree
+    (lower(email) COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: case_insensitive_username
+
+-- DROP INDEX public.case_insensitive_username;
+
+CREATE INDEX case_insensitive_username
+    ON public."_User" USING btree
+    (lower(username) COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+    TABLESPACE pg_default;
